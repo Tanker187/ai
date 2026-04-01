@@ -51,20 +51,30 @@ jobs:
 
       - name: Normalize pull_request.head
         id: pr-head
+        env:
+          WORKFLOW_RUN_HEAD_SHA: ${{ github.event.workflow_run.head.sha }}
+          WORKFLOW_RUN_HEAD_REF: ${{ github.event.workflow_run.head.ref }}
+          WORKFLOW_RUN_HEAD_REPO_FULL_NAME: ${{ github.event.workflow_run.head.repo.full_name }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD_REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
+          CHECK_RUN_HEAD_SHA: ${{ github.event.check_run.pull_requests[0].head.sha }}
+          CHECK_RUN_HEAD_REF: ${{ github.event.check_run.pull_requests[0].head.ref }}
+          CHECK_RUN_HEAD_REPO_FULL_NAME: ${{ github.event.check_run.pull_requests[0].head.repo.full_name }}
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "sha=${{ github.event.workflow_run.head.sha }}" >> "$GITHUB_OUTPUT"
-            echo "ref=${{ github.event.workflow_run.head.ref }}" >> "$GITHUB_OUTPUT"
-            echo "repo_full_name=${{ github.event.workflow_run.head.repo.full_name }}" >> "$GITHUB_OUTPUT"
+            echo "sha=$WORKFLOW_RUN_HEAD_SHA" >> "$GITHUB_OUTPUT"
+            echo "ref=$WORKFLOW_RUN_HEAD_REF" >> "$GITHUB_OUTPUT"
+            echo "repo_full_name=$WORKFLOW_RUN_HEAD_REPO_FULL_NAME" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event_name }}" == "pull_request_target" ]]; then
-            echo "sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
-            echo "ref=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_OUTPUT"
-            echo "repo_full_name=${{ github.event.pull_request.head.repo.full_name }}" >> "$GITHUB_OUTPUT"
+            echo "sha=$PR_HEAD_SHA" >> "$GITHUB_OUTPUT"
+            echo "ref=$PR_HEAD_REF" >> "$GITHUB_OUTPUT"
+            echo "repo_full_name=$PR_HEAD_REPO_FULL_NAME" >> "$GITHUB_OUTPUT"
           else
             # check_run event
-            echo "sha=${{ github.event.check_run.pull_requests[0].head.sha }}" >> "$GITHUB_OUTPUT"
-            echo "ref=${{ github.event.check_run.pull_requests[0].head.ref }}" >> "$GITHUB_OUTPUT"
-            echo "repo_full_name=${{ github.event.check_run.pull_requests[0].head.repo.full_name }}" >> "$GITHUB_OUTPUT"
+            echo "sha=$CHECK_RUN_HEAD_SHA" >> "$GITHUB_OUTPUT"
+            echo "ref=$CHECK_RUN_HEAD_REF" >> "$GITHUB_OUTPUT"
+            echo "repo_full_name=$CHECK_RUN_HEAD_REPO_FULL_NAME" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout Repository
